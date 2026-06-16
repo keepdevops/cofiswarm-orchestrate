@@ -1,0 +1,10 @@
+test/standalone/opt/cofiswarm/*/bin/*
+!test/standalone/opt/cofiswarm/**/.gitkeep
+test/standalone/var/lib/**/*
+!test/standalone/var/lib/**/.gitkeep
+test/standalone/var/log/**/*
+!test/standalone/var/log/**/.gitkeep
+test/standalone/run/**/*
+!test/standalone/run/**/.gitkeep
+.env
+*.log
