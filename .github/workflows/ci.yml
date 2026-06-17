@@ -17,6 +17,12 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
+      - uses: actions/checkout@v6
+        if: hashFiles('go.mod') != ''
+        with:
+          repository: keepdevops/cofiswarm-mode-sdk
+          path: cofiswarm-mode-sdk
+
       - uses: actions/setup-go@v5
         if: hashFiles('go.mod') != ''
         with:
@@ -27,6 +33,21 @@ jobs:
         with:
           node-version: 24
           cache: npm
+
+      - name: Go workspace (mode-sdk)
+        if: hashFiles('go.mod') != ''
+        run: |
+          set -euo pipefail
+          if grep -q 'github.com/keepdevops/cofiswarm-mode-sdk' go.mod; then
+            cat > go.work <<'EOF'
+          go 1.22
+
+          use .
+
+          replace github.com/keepdevops/cofiswarm-mode-sdk => ./cofiswarm-mode-sdk
+          EOF
+            echo "GOWORK=${{ github.workspace }}/go.work" >> "$GITHUB_ENV"
+          fi
 
       - name: Layout + tests
         run: |
