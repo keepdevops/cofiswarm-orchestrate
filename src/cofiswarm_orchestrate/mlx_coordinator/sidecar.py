@@ -15,6 +15,7 @@ from typing import Any
 
 from aiohttp import web
 
+from cofiswarm_orchestrate import observer
 from cofiswarm_orchestrate.manager import SwarmFactory
 from cofiswarm_orchestrate.mlx_coordinator.backend import MlxBackend
 from cofiswarm_orchestrate.mlx_coordinator.service_orchestrate import register_orchestrate_routes
@@ -85,6 +86,7 @@ def make_sidecar_app() -> web.Application:
     app.on_startup.append(on_startup)
     app.on_cleanup.append(on_cleanup)
     register_orchestrate_routes(app)
+    observer.attach(app)  # announce presence on the observer bus (no-op unless COFISWARM_NATS_URL set)
     return app
 
 

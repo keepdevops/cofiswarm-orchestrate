@@ -14,3 +14,8 @@ prometheus-client==0.25.0
 numpy==2.4.3
 mlx==0.31.2
 mlx-lm==0.31.3
+
+# Observer bus client (Python) — optional, only needed when COFISWARM_NATS_URL is set
+# (presence reporting to cofiswarm-observer). Local dev: pip install -e ../cofiswarm-observer-sdk/python
+nats-py>=2.6
+cofiswarm-observer-sdk>=1.2.0
