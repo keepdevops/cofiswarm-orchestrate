@@ -85,23 +85,6 @@ def _roster_rag_default(swarm: dict[str, Any], body: dict[str, Any]) -> dict[str
     return out
 
 
-def _render_rag_block(chunks: list[dict[str, Any]]) -> str:
-    """Render retrieved chunks into the same ``<context source="rag">`` block the
-    llama path (cofiswarm-dispatch + mode-sdk) prepends, so MLX agents receive
-    identical context. Returns "" when there are no chunks."""
-    if not chunks:
-        return ""
-    lines = ['<context source="rag">']
-    for i, c in enumerate(chunks):
-        lines.append(
-            f'[#{i} {c.get("source_path", "")} chunk={c.get("chunk_idx", 0)} '
-            f'distance={c.get("distance", 0.0)}]'
-        )
-        lines.append(str(c.get("content", "")))
-    lines.append("</context>")
-    return "\n".join(lines) + "\n\n"
-
-
 _PYTHON_MODES = {m.mode_id: m for m in [MapReduceMode(), SpeculativeMode(), CriticDebateMode(), TreeOfThoughtMode()]}
 
 
@@ -139,13 +122,11 @@ async def handle_orchestrate(request: web.Request) -> web.Response:
     # Bridge per-agent use_rag from the roster when the request is silent (UI omits it
     # when its RAG toggle is off; an explicit request value still wins).
     body = _roster_rag_default(request.app["swarm"], body)
-    # Retrieve top-k chunks (filtered by min_score), expose in params for citation/meta,
-    # AND prepend the rendered block to the prompt so the mode's MLX agents actually
-    # receive the context (parity with the llama path's per-agent injection).
+    # Retrieve top-k chunks (filtered by min_score) into params["rag_context"]; the modes
+    # inject it per-agent via rag_xml() in their prompt templates.
     rag_chunks = await _rag_context_for(body, prompt)
     if rag_chunks:
         params = {**params, "rag_context": rag_chunks}
-        prompt = _render_rag_block(rag_chunks) + prompt
 
     try:
         ctx = ModeContext(
@@ -211,8 +192,7 @@ async def handle_orchestrate_stream(request: web.Request) -> web.StreamResponse:
     body = _roster_rag_default(request.app["swarm"], body)  # roster->MLX use_rag bridge
     rag_chunks = await _rag_context_for(body, prompt)
     if rag_chunks:
-        params = {**params, "rag_context": rag_chunks}
-        prompt = _render_rag_block(rag_chunks) + prompt  # inject into the prompt (parity with llama path)
+        params = {**params, "rag_context": rag_chunks}  # modes inject it per-agent via rag_xml()
 
     resp = web.StreamResponse(headers={
         "Content-Type": "text/event-stream",
