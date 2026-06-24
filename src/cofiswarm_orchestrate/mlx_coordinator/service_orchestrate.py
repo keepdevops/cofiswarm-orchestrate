@@ -67,6 +67,24 @@ async def _rag_context_for(body: dict[str, Any], prompt: str) -> list[dict[str, 
     return [c for c in chunks if float(c.get("distance", 0.0)) <= min_score]
 
 
+def _roster_rag_default(swarm: dict[str, Any], body: dict[str, Any]) -> dict[str, Any]:
+    """Bridge the roster's per-agent use_rag into the MLX path. When the request is
+    SILENT on use_rag, enable it if any swarm agent opts in (use_rag), defaulting
+    rag_top_k to the max across opted-in agents. An explicit request use_rag (true or
+    false) always wins, so the UI toggle is never overridden when it sends one."""
+    if "use_rag" in body:
+        return body
+    opted = [a for a in swarm.values() if getattr(a, "use_rag", False)]
+    if not opted:
+        return body
+    out = {**body, "use_rag": True}
+    if not out.get("rag_top_k"):
+        topk = max((getattr(a, "rag_top_k", None) or 0) for a in opted)
+        if topk:
+            out["rag_top_k"] = topk
+    return out
+
+
 def _render_rag_block(chunks: list[dict[str, Any]]) -> str:
     """Render retrieved chunks into the same ``<context source="rag">`` block the
     llama path (cofiswarm-dispatch + mode-sdk) prepends, so MLX agents receive
@@ -118,6 +136,9 @@ async def handle_orchestrate(request: web.Request) -> web.Response:
     session_id = (body.get("session_id") or "").strip() or str(uuid.uuid4())
     params: dict[str, Any] = body.get("params") or {}
 
+    # Bridge per-agent use_rag from the roster when the request is silent (UI omits it
+    # when its RAG toggle is off; an explicit request value still wins).
+    body = _roster_rag_default(request.app["swarm"], body)
     # Retrieve top-k chunks (filtered by min_score), expose in params for citation/meta,
     # AND prepend the rendered block to the prompt so the mode's MLX agents actually
     # receive the context (parity with the llama path's per-agent injection).
@@ -187,6 +208,7 @@ async def handle_orchestrate_stream(request: web.Request) -> web.StreamResponse:
     session_id = (body.get("session_id") or "").strip() or str(uuid.uuid4())
     params: dict[str, Any] = body.get("params") or {}
 
+    body = _roster_rag_default(request.app["swarm"], body)  # roster->MLX use_rag bridge
     rag_chunks = await _rag_context_for(body, prompt)
     if rag_chunks:
         params = {**params, "rag_context": rag_chunks}

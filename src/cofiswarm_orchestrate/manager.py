@@ -54,6 +54,11 @@ class AgentConfig(BaseModel):
     # not the C++ coordinator. The C++ side skips these agents at configure time.
     coordinator: str | None = None
 
+    # Per-agent RAG targeting (mirrors swarm-config.json / agent-registry). When set,
+    # the MLX orchestrate path defaults use_rag on for runs over this agent.
+    use_rag: bool = False
+    rag_top_k: int | None = None
+
     # Future fields (Phase 4): RAG config.
     rag: dict[str, Any] | None = None
 
