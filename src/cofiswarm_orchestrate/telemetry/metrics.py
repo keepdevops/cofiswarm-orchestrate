@@ -62,7 +62,7 @@ UNIFIED_MEMORY_FREE = Gauge(
 # RAG metrics (Phase 4 — declared here so all telemetry lives in one place).
 RAG_QUERY_SECONDS = Histogram(
     "rag_query_seconds",
-    "End-to-end pgvector query latency.",
+    "End-to-end sqlite-vec query latency.",
     buckets=(0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1.0),
 )
 RAG_CHUNKS_RETURNED = Histogram(
@@ -77,7 +77,7 @@ RAG_EMBED_SECONDS = Histogram(
 )
 RAG_DB_ERRORS = Counter(
     "rag_db_errors_total",
-    "Postgres/pgvector errors during RAG operations.",
+    "sqlite-vec store errors during RAG operations.",
     ["op"],
 )
 
