@@ -4,6 +4,8 @@ github.com/keepdevops/cofiswarm-backend-sdk v1.1.1-0.20260625031228-aab588ad0e39
 github.com/keepdevops/cofiswarm-backend-sdk v1.1.1-0.20260625031228-aab588ad0e39/go.mod h1:IbkmDKi8TmoTVCtAutKrqmgPFq6e+9JBgFRYnSCAKAE=
 github.com/keepdevops/cofiswarm-observer-sdk v1.2.0 h1:32fjD51Xs+g7YUn3M32YozspUfmspi8x8ZONescThQE=
 github.com/keepdevops/cofiswarm-observer-sdk v1.2.0/go.mod h1:X3hGazoDLqalWKCNtn12ZNiXR39+YaUwvfKwCW2XNbI=
+github.com/keepdevops/cofiswarm-observer-sdk v1.3.0 h1:SSfKhdWBOb5YDBN6vkIas34Nmn/rwiyLUa44uoDSXSw=
+github.com/keepdevops/cofiswarm-observer-sdk v1.3.0/go.mod h1:X3hGazoDLqalWKCNtn12ZNiXR39+YaUwvfKwCW2XNbI=
 github.com/keepdevops/cofiswarm-tools v1.1.1-0.20260625043458-184bfbf64742 h1:LqKxHzr5wRwvGluPEQ/XYLNVcZNyVrOjrwKT9NVRRVU=
 github.com/keepdevops/cofiswarm-tools v1.1.1-0.20260625043458-184bfbf64742/go.mod h1:qq+8QOeab2/u7MwwdKPHX8cdbfmXX2YkFHjke+96ZsA=
 github.com/klauspost/compress v1.18.5 h1:/h1gH5Ce+VWNLSWqPzOVn6XBO+vJbCNGvjoaGBFW2IE=
