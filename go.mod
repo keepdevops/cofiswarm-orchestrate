@@ -5,7 +5,7 @@ go 1.25.0
 require (
 	github.com/keepdevops/cofiswarm-backend-mlx v1.1.1-0.20260625032556-a5b9016065f0
 	github.com/keepdevops/cofiswarm-backend-sdk v1.1.1-0.20260625031228-aab588ad0e39
-	github.com/keepdevops/cofiswarm-observer-sdk v1.2.0
+	github.com/keepdevops/cofiswarm-observer-sdk v1.3.0
 	github.com/keepdevops/cofiswarm-tools v1.1.1-0.20260625043458-184bfbf64742
 )
 
