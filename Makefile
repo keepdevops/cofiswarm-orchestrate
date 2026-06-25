@@ -1,11 +1,11 @@
 ROLE := orchestrate
-.PHONY: test test-standalone-layout test-import test-orchestrate-gate test-rag-inject-gate
-test: test-standalone-layout test-import test-orchestrate-gate test-rag-inject-gate
+.PHONY: test test-standalone-layout test-go build
+test: test-standalone-layout test-go
 test-standalone-layout:
 	./test/scripts/assert-layout.sh $(ROLE)
-test-import:
-	PYTHONPATH=src python3 -c "from cofiswarm_orchestrate import manager; print('ok:', manager.__name__)"
-test-orchestrate-gate:
-	./test/scripts/test-orchestrate-gate.sh
-test-rag-inject-gate:
-	./test/scripts/test-rag-inject-gate.sh
+# Go-only post-migration: pkg/manager + pkg/memory + internal/orchestrate
+# (handlers, RAG bridge, e2e vs fake mlx_lm.server, the rag-inject-once guard).
+test-go:
+	go build ./... && go test ./...
+build:
+	CGO_ENABLED=0 go build -o bin/orch-sidecar ./cmd/orch-sidecar
