@@ -8,3 +8,9 @@ test/standalone/run/**/*
 !test/standalone/run/**/.gitkeep
 .env
 *.log
+
+# build output
+bin/
+# python bytecode
+__pycache__/
+*.pyc
